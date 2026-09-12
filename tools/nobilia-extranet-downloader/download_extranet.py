@@ -80,6 +80,38 @@ EXTENSION_BY_CONTENT_TYPE = {
 }
 HTML_CONTENT_TYPES = ("text/html", "application/xhtml+xml")
 
+
+INSPECT_PROBE = """
+() => {
+  const d = document, w = window;
+  const abs = (els, attr) => [...els].map(e => e[attr]).filter(Boolean);
+  const navSel = 'nav a[href], [role=navigation] a[href], header a[href],'
+               + ' .nav a[href], .menu a[href], #menu a[href], aside a[href],'
+               + ' .sidebar a[href], ul.navigation a[href]';
+  return {
+    title: d.title || '',
+    links: abs(d.querySelectorAll('a[href]'), 'href'),
+    navLinks: abs(d.querySelectorAll(navSel), 'href'),
+    downloadLinks: abs(d.querySelectorAll('a[download]'), 'href'),
+    iframes: abs(d.querySelectorAll('iframe[src]'), 'src'),
+    forms: d.querySelectorAll('form').length,
+    buttons: d.querySelectorAll('button, input[type=button], input[type=submit]').length,
+    tables: d.querySelectorAll('table').length,
+    selects: d.querySelectorAll('select').length,
+    textLength: d.body ? (d.body.innerText || '').length : 0,
+    frameworks: {
+      react: !!(w.React || d.querySelector('[data-reactroot], #root, #react-root')),
+      angular: !!(w.angular || d.querySelector('[ng-version], [ng-app], app-root')),
+      vue: !!(w.Vue || d.querySelector('[data-v-app], #app[data-v-app]')),
+      next: !!d.querySelector('#__NEXT_DATA__'),
+      nuxt: !!w.__NUXT__,
+      jquery: !!w.jQuery,
+      sharepoint: !!(w._spPageContextInfo || d.querySelector('#s4-workspace')),
+    },
+  };
+}
+"""
+
 LINK_EXTRACTOR = """
 () => {
   const out = [];
@@ -513,6 +545,201 @@ def cmd_crawl(args) -> int:
     return code
 
 
+
+def _path_prefix(url: str, depth: int = 2) -> str:
+    segments = [s for s in urlsplit(url).path.split("/") if s]
+    if not segments:
+        return "/"
+    return "/" + "/".join(segments[:depth])
+
+
+def cmd_inspect(args) -> int:
+    """Probe the portal and write a structural report, without mirroring it."""
+    state = Path(args.state)
+    if not state.exists():
+        log(f"No session file at {state}. Run the 'login' command first.")
+        return 1
+
+    out = Path(args.out)
+    out.mkdir(parents=True, exist_ok=True)
+    start = normalize_url(args.url)
+    start_host = urlsplit(start).netloc.lower()
+
+    with sync_playwright() as playwright:
+        browser, context = build_context(playwright, args, headless=not args.headed)
+        page = context.new_page()
+        visited: list[dict] = []
+        queue: deque[tuple[str, int]] = deque([(start, 0)])
+        seen = {start}
+
+        while queue and len(visited) < args.sample:
+            url, depth = queue.popleft()
+            log(f"probing {url}")
+            entry: dict = {"url": url, "depth": depth}
+            try:
+                response = page.goto(url, wait_until=args.wait_until)
+                if args.settle:
+                    page.wait_for_timeout(int(args.settle * 1000))
+                entry["http"] = response.status if response else None
+                entry["final_url"] = normalize_url(page.url)
+                if LOGIN_RE.search(entry["final_url"]) and not LOGIN_RE.search(url):
+                    entry["note"] = "redirected to login - session expired?"
+                    visited.append(entry)
+                    log("  redirected to the login page; stopping.")
+                    break
+
+                probe = page.evaluate(INSPECT_PROBE)
+                rendered_links = [normalize_url(urljoin(page.url, u)) for u in probe["links"]]
+                entry.update({
+                    "title": probe["title"],
+                    "rendered_link_count": len(rendered_links),
+                    "nav_link_count": len(probe["navLinks"]),
+                    "forms": probe["forms"],
+                    "buttons": probe["buttons"],
+                    "tables": probe["tables"],
+                    "selects": probe["selects"],
+                    "iframes": probe["iframes"][:10],
+                    "download_attr_links": probe["downloadLinks"][:10],
+                    "text_length": probe["textLength"],
+                    "frameworks": [k for k, v in probe["frameworks"].items() if v],
+                    "links": rendered_links,
+                })
+
+                # Compare the served HTML with the rendered DOM: a big gap means
+                # the navigation only exists after JavaScript runs.
+                try:
+                    raw = context.request.get(url, timeout=args.timeout * 1000)
+                    raw_body = raw.text()
+                    entry["raw_bytes"] = len(raw_body)
+                    entry["raw_anchor_count"] = raw_body.lower().count("<a ")
+                    entry["js_rendered"] = (
+                        len(rendered_links) > max(5, entry["raw_anchor_count"] * 2)
+                    )
+                except PlaywrightError:
+                    entry["raw_bytes"] = None
+                    entry["js_rendered"] = None
+
+                for link in rendered_links:
+                    if link in seen or looks_binary(link) or LOGOUT_RE.search(link):
+                        continue
+                    if urlsplit(link).netloc.lower() != start_host:
+                        continue
+                    seen.add(link)
+                    if depth + 1 <= args.depth:
+                        queue.append((link, depth + 1))
+
+            except PlaywrightTimeout:
+                entry["error"] = "timeout"
+                log("  timeout")
+            except PlaywrightError as err:
+                entry["error"] = str(err)[:200]
+                log(f"  error: {str(err)[:120]}")
+
+            visited.append(entry)
+            if args.delay:
+                time.sleep(args.delay)
+
+        context.storage_state(path=str(state))
+        browser.close()
+
+    # ---- aggregate -----------------------------------------------------
+    all_links: list[str] = []
+    for entry in visited:
+        all_links.extend(entry.get("links", []))
+
+    sections: dict[str, int] = {}
+    subsections: dict[str, int] = {}
+    extensions: dict[str, int] = {}
+    hosts: dict[str, int] = {}
+    for link in all_links:
+        parts = urlsplit(link)
+        host = parts.netloc.lower()
+        if host:  # mailto:/javascript: links have no host
+            hosts[host] = hosts.get(host, 0) + 1
+        if host != start_host:
+            continue
+        top = _path_prefix(link, 1)
+        sections[top] = sections.get(top, 0) + 1
+        sub = _path_prefix(link, 2)
+        subsections[sub] = subsections.get(sub, 0) + 1
+        suffix = Path(parts.path).suffix.lower()
+        if suffix:
+            extensions[suffix] = extensions.get(suffix, 0) + 1
+
+    frameworks = sorted({f for e in visited for f in e.get("frameworks", [])})
+    js_rendered = any(e.get("js_rendered") for e in visited)
+    unique_internal = sorted({l for l in all_links
+                              if urlsplit(l).netloc.lower() == start_host})
+
+    report = {
+        "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        "start_url": start,
+        "pages_probed": len(visited),
+        "unique_internal_links": len(unique_internal),
+        "frameworks_detected": frameworks,
+        "javascript_rendered": js_rendered,
+        "sections": dict(sorted(sections.items(), key=lambda kv: -kv[1])),
+        "subsections": dict(sorted(subsections.items(), key=lambda kv: -kv[1])),
+        "internal_links": unique_internal[:3000],
+        "file_extensions": dict(sorted(extensions.items(), key=lambda kv: -kv[1])),
+        "hosts": dict(sorted(hosts.items(), key=lambda kv: -kv[1])),
+        "pages": visited,
+    }
+    (out / "report.json").write_text(
+        json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
+
+    # ---- human-readable summary ---------------------------------------
+    lines = [
+        "# Structure report",
+        "",
+        f"- Start URL: `{start}`",
+        f"- Pages probed: {len(visited)}",
+        f"- Unique internal links seen: {len(unique_internal)}",
+        f"- JavaScript-rendered navigation: {'yes' if js_rendered else 'no'}",
+        f"- Frameworks detected: {', '.join(frameworks) if frameworks else 'none'}",
+        "",
+        "## Sections (link count by first path segment)",
+        "",
+    ]
+    lines += [f"- `{k}` — {v}" for k, v in list(report["sections"].items())[:40]] or ["- none"]
+    lines += ["", "## Subsections (two path segments)", ""]
+    lines += [f"- `{k}` — {v}" for k, v in list(report["subsections"].items())[:40]] or ["- none"]
+    lines += ["", "## File types linked", ""]
+    lines += [f"- `{k}` — {v}" for k, v in list(report["file_extensions"].items())[:30]] or ["- none"]
+    lines += ["", "## Hosts referenced", ""]
+    lines += [f"- `{k}` — {v}" for k, v in list(report["hosts"].items())[:20]]
+    lines += ["", "## Pages probed", ""]
+    for entry in visited:
+        lines.append(
+            f"- `{entry['url']}` — {entry.get('title', '?')!r} "
+            f"(HTTP {entry.get('http')}, {entry.get('rendered_link_count', 0)} links, "
+            f"{entry.get('nav_link_count', 0)} nav, {entry.get('tables', 0)} tables"
+            + (f", {entry['error']}" if entry.get("error") else "") + ")"
+        )
+
+    # ---- suggested crawl command ---------------------------------------
+    suggestion = ["python3 download_extranet.py", f"  --url {start}", "  crawl --out download"]
+    if js_rendered:
+        suggestion.append("  --settle 2")
+    if len(unique_internal) > 500:
+        suggestion.append("  --max-pages 200   # large site: mirror it in batches")
+    extra_hosts = [h for h in hosts if h != start_host and h.endswith(
+        ".".join(start_host.split(".")[-2:]))]
+    for host in extra_hosts[:3]:
+        suggestion.append(f"  --allow-host {host}")
+    lines += ["", "## Suggested crawl command", "", "```bash", " \\\n".join(suggestion), "```"]
+
+    (out / "report.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+    print()
+    print("\n".join(lines[:60]))
+    print()
+    log(f"Full report: {(out / 'report.md').resolve()} and report.json")
+    log("The report lists URLs and page titles, no page content - but review it "
+        "before sharing, URLs alone can be revealing.")
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description="Mirror an authenticated extranet locally.",
@@ -550,6 +777,22 @@ def build_parser() -> argparse.ArgumentParser:
                        help="extra host to crawl (repeatable, e.g. a CDN)")
     crawl.add_argument("--headed", action="store_true", help="show the browser while crawling")
     crawl.set_defaults(func=cmd_crawl)
+
+    inspect = sub.add_parser(
+        "inspect", help="probe the site structure and write a report (downloads nothing)")
+    inspect.add_argument("--out", default="recon", help="report directory (default: %(default)s)")
+    inspect.add_argument("--sample", type=int, default=12,
+                         help="how many pages to probe (default: %(default)s)")
+    inspect.add_argument("--depth", type=int, default=2,
+                         help="how deep to follow links while sampling (default: %(default)s)")
+    inspect.add_argument("--delay", type=float, default=1.0, help="seconds between probes")
+    inspect.add_argument("--settle", type=float, default=2.0,
+                         help="extra seconds to wait after load (default: %(default)s)")
+    inspect.add_argument("--wait-until", default="networkidle",
+                         choices=["load", "domcontentloaded", "networkidle", "commit"],
+                         help="navigation wait condition (default: %(default)s)")
+    inspect.add_argument("--headed", action="store_true", help="show the browser while probing")
+    inspect.set_defaults(func=cmd_inspect)
 
     return parser
 

@@ -6,7 +6,10 @@ une connexion (ex. `extranet.nobilia.de`) :
 1. **`login`** — ouvre une vraie fenêtre de navigateur, tu te connectes à la
    main, et la session est enregistrée dans un fichier d'état.
    Ton mot de passe n'est jamais écrit sur le disque, seulement les cookies.
-2. **`crawl`** — rejoue cette session sans interface, parcourt le site et
+2. **`inspect`** *(optionnel)* — sonde le portail et produit un rapport de
+   structure, sans rien télécharger. Utile pour régler le `crawl` avant de le
+   lancer en grand.
+3. **`crawl`** — rejoue cette session sans interface, parcourt le site et
    copie les pages et les fichiers en local. Interruptible et reprenable.
 
 > **À vérifier avant usage.** N'utilise cet outil que sur un compte dont tu as
@@ -52,7 +55,28 @@ read -s EXTRANET_PASSWORD && export EXTRANET_PASSWORD   # saisie masquée
 python3 download_extranet.py --url https://extranet.nobilia.de/ login --auto
 ```
 
-## 2. Télécharger
+## 2. Analyser la structure (optionnel mais recommandé)
+
+```bash
+python3 download_extranet.py --url https://extranet.nobilia.de/ inspect --out recon
+```
+
+Ne télécharge rien : sonde une douzaine de pages et écrit `recon/report.md`
+(lisible) et `recon/report.json` (détaillé). Le rapport donne :
+
+- les **sections** du portail, par fréquence de liens ;
+- les **types de fichiers** présents (`.pdf`, `.xlsx`, `.dwg`, …) ;
+- les **hôtes** référencés, pour savoir s'il faut un `--allow-host` (CDN) ;
+- si la navigation est **construite en JavaScript** — comparaison entre le HTML
+  servi et le DOM rendu, page par page ;
+- le framework détecté (React, Angular, Vue, SharePoint, …) ;
+- une **commande `crawl` suggérée**, adaptée à ce qui a été trouvé.
+
+Le rapport ne contient que des URL et des titres de pages, jamais le contenu.
+Relis-le quand même avant de le partager : des URL seules peuvent être
+parlantes (noms de clients, références tarifaires).
+
+## 3. Télécharger
 
 ```bash
 python3 download_extranet.py --url https://extranet.nobilia.de/ crawl --out download
@@ -93,6 +117,9 @@ il s'était arrêté.
 | `--wait-until load` | condition de chargement moins stricte que `networkidle` |
 | `--allow-host cdn.nobilia.de` | autoriser un domaine supplémentaire (CDN) |
 | `--headed` | afficher le navigateur pendant le parcours |
+
+`inspect` accepte `--sample` (nombre de pages sondées, défaut 12) et `--depth`
+(profondeur d'échantillonnage, défaut 2).
 
 ## Garde-fous intégrés
 
