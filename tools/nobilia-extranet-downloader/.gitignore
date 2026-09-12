@@ -1,0 +1,7 @@
+# Session cookies - never commit these
+state.json
+*state.json
+
+# Downloaded content
+download/
+*.log
