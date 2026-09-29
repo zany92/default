@@ -1,0 +1,312 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		EAD5EFCA92B67B92279AA072 /* MelonJellyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29B6B4080C8BEEB7615D6197 /* MelonJellyApp.swift */; };
+		62ADFAF7EDC910F8379C61C6 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A4C8F32E95A9FD25E99B0F8 /* ContentView.swift */; };
+		B6481E95F245E6FBF037677E /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F7A30D8B3A7D72DDC7D3157 /* AppModel.swift */; };
+		2C325D5D2E0EEDB0B0739E04 /* JellyMetalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EFA0A0D85F0C31922F5C5A9 /* JellyMetalView.swift */; };
+		4C5C827A70289F1186B5C4BB /* Engine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AE47975BDEAD24983F7596D /* Engine.swift */; };
+		923F5C79DC0EA49A6569E8F5 /* Renderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B84A8DD2ACE5E82AC11BF1FF /* Renderer.swift */; };
+		DE5A43B99B4B5A56FD216735 /* SoftBody.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56F9D29C04E6BD7A3E47BECD /* SoftBody.swift */; };
+		707D5F21D133EEEB70AA56A6 /* Pieces.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91347E3039108D43E87FFDFA /* Pieces.swift */; };
+		4B6BF9E8B2327989C2D64EBF /* Geometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DAB8C6D7AB592A5907AD3F4 /* Geometry.swift */; };
+		9CC0382915D1D1CB42F916ED /* KnifeMesh.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4A93859BECB6349867A640E /* KnifeMesh.swift */; };
+		03D9099229954507FC02ADCC /* MathUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3248769300D652F638AB15B1 /* MathUtil.swift */; };
+		0AD6B00FC9B0DC2B217DC2B0 /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 31D476960262243451B1E1FE /* Shaders.metal */; };
+		121B2F4179DFD18DB91D6010 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 42D35BC73752536E532BE199 /* Assets.xcassets */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		D2A57DC1D883FD21FB995169 /* MelonJelly.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MelonJelly.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		29B6B4080C8BEEB7615D6197 /* MelonJellyApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MelonJellyApp.swift; sourceTree = "<group>"; };
+		1A4C8F32E95A9FD25E99B0F8 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		8F7A30D8B3A7D72DDC7D3157 /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
+		8EFA0A0D85F0C31922F5C5A9 /* JellyMetalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JellyMetalView.swift; sourceTree = "<group>"; };
+		8AE47975BDEAD24983F7596D /* Engine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Engine.swift; sourceTree = "<group>"; };
+		B84A8DD2ACE5E82AC11BF1FF /* Renderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Renderer.swift; sourceTree = "<group>"; };
+		56F9D29C04E6BD7A3E47BECD /* SoftBody.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoftBody.swift; sourceTree = "<group>"; };
+		91347E3039108D43E87FFDFA /* Pieces.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pieces.swift; sourceTree = "<group>"; };
+		9DAB8C6D7AB592A5907AD3F4 /* Geometry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Geometry.swift; sourceTree = "<group>"; };
+		C4A93859BECB6349867A640E /* KnifeMesh.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnifeMesh.swift; sourceTree = "<group>"; };
+		3248769300D652F638AB15B1 /* MathUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MathUtil.swift; sourceTree = "<group>"; };
+		31D476960262243451B1E1FE /* Shaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Shaders.metal; sourceTree = "<group>"; };
+		42D35BC73752536E532BE199 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		DAF6AA633395B1B76148E35B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		2B731CEFC6751AAE0EC69B98 = {
+			isa = PBXGroup;
+			children = (
+				D8DBA3F9900DD17689CA0C4D /* MelonJelly */,
+				86024CAD1E83101D97359D73 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		86024CAD1E83101D97359D73 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				D2A57DC1D883FD21FB995169 /* MelonJelly.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		D8DBA3F9900DD17689CA0C4D /* MelonJelly */ = {
+			isa = PBXGroup;
+			children = (
+				29B6B4080C8BEEB7615D6197 /* MelonJellyApp.swift */,
+				1A4C8F32E95A9FD25E99B0F8 /* ContentView.swift */,
+				8F7A30D8B3A7D72DDC7D3157 /* AppModel.swift */,
+				8EFA0A0D85F0C31922F5C5A9 /* JellyMetalView.swift */,
+				8AE47975BDEAD24983F7596D /* Engine.swift */,
+				B84A8DD2ACE5E82AC11BF1FF /* Renderer.swift */,
+				56F9D29C04E6BD7A3E47BECD /* SoftBody.swift */,
+				91347E3039108D43E87FFDFA /* Pieces.swift */,
+				9DAB8C6D7AB592A5907AD3F4 /* Geometry.swift */,
+				C4A93859BECB6349867A640E /* KnifeMesh.swift */,
+				3248769300D652F638AB15B1 /* MathUtil.swift */,
+				31D476960262243451B1E1FE /* Shaders.metal */,
+				42D35BC73752536E532BE199 /* Assets.xcassets */,
+			);
+			path = MelonJelly;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		42AEFBAE01D2DFD981F7DA7D /* MelonJelly */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CE2BB50980DFD48FF547D497 /* Build configuration list for PBXNativeTarget "MelonJelly" */;
+			buildPhases = (
+				FCA229C23F166EBB0BA5029E /* Sources */,
+				DAF6AA633395B1B76148E35B /* Frameworks */,
+				943E4BBD9B51C81965501BA3 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MelonJelly;
+			productName = MelonJelly;
+			productReference = D2A57DC1D883FD21FB995169 /* MelonJelly.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		46F86FAA6BBF9AC94A7E4595 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1500;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					42AEFBAE01D2DFD981F7DA7D = {
+						CreatedOnToolsVersion = 15.0;
+					};
+				};
+			};
+			buildConfigurationList = 01076EBF22530E406F54B419 /* Build configuration list for PBXProject "MelonJelly" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = fr;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				fr,
+				Base,
+			);
+			mainGroup = 2B731CEFC6751AAE0EC69B98;
+			productRefGroup = 86024CAD1E83101D97359D73 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				42AEFBAE01D2DFD981F7DA7D /* MelonJelly */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		943E4BBD9B51C81965501BA3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				121B2F4179DFD18DB91D6010 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		FCA229C23F166EBB0BA5029E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EAD5EFCA92B67B92279AA072 /* MelonJellyApp.swift in Sources */,
+				62ADFAF7EDC910F8379C61C6 /* ContentView.swift in Sources */,
+				B6481E95F245E6FBF037677E /* AppModel.swift in Sources */,
+				2C325D5D2E0EEDB0B0739E04 /* JellyMetalView.swift in Sources */,
+				4C5C827A70289F1186B5C4BB /* Engine.swift in Sources */,
+				923F5C79DC0EA49A6569E8F5 /* Renderer.swift in Sources */,
+				DE5A43B99B4B5A56FD216735 /* SoftBody.swift in Sources */,
+				707D5F21D133EEEB70AA56A6 /* Pieces.swift in Sources */,
+				4B6BF9E8B2327989C2D64EBF /* Geometry.swift in Sources */,
+				9CC0382915D1D1CB42F916ED /* KnifeMesh.swift in Sources */,
+				03D9099229954507FC02ADCC /* MathUtil.swift in Sources */,
+				0AD6B00FC9B0DC2B217DC2B0 /* Shaders.metal in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		6F0B85FC643AF9C218F627EA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_TESTABILITY = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				ONLY_ACTIVE_ARCH = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+			};
+			name = Debug;
+		};
+		1B05A9D10F61E514E88AF240 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		E67DED621DA82404399DCDC1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Melon Jelly";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.MelonJelly;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		8951287761002419191396D2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Melon Jelly";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.MelonJelly;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		01076EBF22530E406F54B419 /* Build configuration list for PBXProject "MelonJelly" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6F0B85FC643AF9C218F627EA /* Debug */,
+				1B05A9D10F61E514E88AF240 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CE2BB50980DFD48FF547D497 /* Build configuration list for PBXNativeTarget "MelonJelly" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E67DED621DA82404399DCDC1 /* Debug */,
+				8951287761002419191396D2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 46F86FAA6BBF9AC94A7E4595 /* Project object */;
+}
